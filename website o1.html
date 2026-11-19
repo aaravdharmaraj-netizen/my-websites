@@ -1,0 +1,839 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coordinate Graphing Calculator</title>
+
+<style>
+:root {
+    --bg: #0b1020;
+    --panel: #121a2e;
+    --grid: #26334d;
+    --text: #e8eefc;
+    --muted: #9aa8c3;
+    --accent: #55e6c1;
+    --curve: #ffb454;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 28px;
+    background: radial-gradient(circle at top, #17233d, var(--bg) 60%);
+    color: var(--text);
+    font-family: system-ui, sans-serif;
+}
+
+main {
+    max-width: 1100px;
+    margin: auto;
+}
+
+h1 {
+    margin: 0 0 8px;
+    font-size: clamp(1.7rem, 4vw, 2.5rem);
+}
+
+.sub {
+    color: var(--muted);
+    margin-bottom: 24px;
+}
+
+.panel {
+    background: rgba(18, 26, 46, 0.94);
+    border: 1px solid #293650;
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 18px 60px #0004;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+input {
+    flex: 1;
+    min-width: 200px;
+    background: #0b1223;
+    color: var(--text);
+    border: 1px solid #34435f;
+    border-radius: 10px;
+    padding: 13px;
+    font: inherit;
+    outline: none;
+}
+
+input:focus {
+    border-color: var(--accent);
+}
+
+button {
+    border: 0;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font: inherit;
+    cursor: pointer;
+    transition: 0.15s;
+}
+
+button:hover {
+    filter: brightness(1.15);
+    transform: translateY(-1px);
+}
+
+#graphBtn {
+    background: var(--accent);
+    color: #07221c;
+    font-weight: bold;
+}
+
+.secondary {
+    background: #26344e;
+    color: var(--text);
+}
+
+.examples {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 12px 0;
+}
+
+.examples button {
+    padding: 7px 11px;
+    font-size: 0.88rem;
+}
+
+#message {
+    min-height: 24px;
+    color: var(--muted);
+    margin: 12px 2px 4px;
+    font-size: 0.92rem;
+}
+
+#message.error {
+    color: #ff8d9a;
+}
+
+.graph-wrap {
+    margin-top: 14px;
+    background: #0a1020;
+    border: 1px solid #293650;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: min(66vh, 620px);
+    min-height: 360px;
+    cursor: crosshair;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 12px;
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 14px;
+    }
+
+    .panel {
+        padding: 12px;
+    }
+
+    canvas {
+        min-height: 330px;
+    }
+}
+</style>
+</head>
+
+<body>
+<main>
+    <h1>Coordinate Graphing Calculator</h1>
+    <p class="sub">
+        Type an equation, graph it, and explore the coordinate plane.
+    </p>
+
+    <section class="panel">
+        <form id="equationForm" class="controls">
+            <input
+                id="equation"
+                aria-label="Equation"
+                spellcheck="false"
+                autocomplete="off"
+                value="y = 2x + 3"
+                placeholder="Enter an equation, e.g. y = x^2"
+            >
+
+            <button id="graphBtn" type="submit">
+                Graph equation
+            </button>
+
+            <button id="resetBtn" class="secondary" type="button">
+                Reset view
+            </button>
+        </form>
+
+        <div class="examples">
+            <button class="secondary example" data-eq="y = 2x + 3">
+                y = 2x + 3
+            </button>
+
+            <button class="secondary example" data-eq="y = x^2">
+                y = x²
+            </button>
+
+            <button class="secondary example" data-eq="y = -0.5x^2 + 4">
+                y = −0.5x² + 4
+            </button>
+
+            <button class="secondary example" data-eq="y = sin(x)">
+                y = sin(x)
+            </button>
+
+            <button class="secondary example" data-eq="y = cos(x)">
+                y = cos(x)
+            </button>
+
+            <button class="secondary example" data-eq="y = sqrt(x)">
+                y = √x
+            </button>
+        </div>
+
+        <div id="message" role="status">
+            Ready. Try an equation above or type your own.
+        </div>
+
+        <div class="graph-wrap">
+            <canvas
+                id="graph"
+                aria-label="Coordinate grid with plotted equation"
+            ></canvas>
+        </div>
+
+        <div class="footer">
+            <span>Scroll to zoom · Drag to move</span>
+            <span id="scaleLabel">View: −10 to 10</span>
+        </div>
+    </section>
+</main>
+
+<script>
+(() => {
+    const canvas = document.getElementById("graph");
+    const ctx = canvas.getContext("2d");
+    const input = document.getElementById("equation");
+    const message = document.getElementById("message");
+    const scaleLabel = document.getElementById("scaleLabel");
+
+    let centerX = 0;
+    let centerY = 0;
+    let unitsPerPixel = 20 / 600;
+    let expression = x => 2 * x + 3;
+
+    let dragging = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    // Turn the equation into math tokens.
+    function tokenize(s) {
+        const tokens = [];
+        let i = 0;
+
+        while (i < s.length) {
+            if (/\s/.test(s[i])) {
+                i++;
+                continue;
+            }
+
+            const rest = s.slice(i);
+            const number = rest.match(
+                /^(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?/i
+            );
+            const ident = rest.match(/^[a-zA-Z]+/);
+
+            if (number) {
+                tokens.push({
+                    type: "num",
+                    value: Number(number[0])
+                });
+                i += number[0].length;
+            } else if (ident) {
+                tokens.push({
+                    type: "id",
+                    value: ident[0].toLowerCase()
+                });
+                i += ident[0].length;
+            } else if ("+-*/^(),".includes(s[i])) {
+                tokens.push({
+                    type: s[i],
+                    value: s[i]
+                });
+                i++;
+            } else {
+                throw new Error(
+                    `Unexpected character "${s[i]}".`
+                );
+            }
+        }
+
+        return tokens;
+    }
+
+    // Parse math expressions without using eval().
+    function parse(source) {
+        let s = source.trim()
+            .replace(/^y\s*=\s*/i, "")
+            .replace(/π/g, "pi")
+            .replace(/×/g, "*")
+            .replace(/÷/g, "/");
+
+        if (!s) {
+            throw new Error(
+                "Enter an equation such as y = 2x + 3."
+            );
+        }
+
+        const tokens = tokenize(s);
+        let pos = 0;
+
+        const peek = () => tokens[pos];
+        const take = () => tokens[pos++];
+
+        const startsPrimary = t =>
+            t && (
+                t.type === "num" ||
+                t.type === "id" ||
+                t.type === "("
+            );
+
+        function primary() {
+            const t = take();
+
+            if (!t) {
+                throw new Error("The equation looks incomplete.");
+            }
+
+            if (t.type === "num") {
+                return {
+                    type: "num",
+                    value: t.value
+                };
+            }
+
+            if (t.type === "id") {
+                if (t.value === "x") {
+                    return { type: "x" };
+                }
+
+                if (t.value === "pi") {
+                    return { type: "num", value: Math.PI };
+                }
+
+                if (t.value === "e") {
+                    return { type: "num", value: Math.E };
+                }
+
+                const funcs = [
+                    "sin", "cos", "tan", "sqrt", "abs",
+                    "log", "ln", "exp", "floor", "ceil"
+                ];
+
+                if (funcs.includes(t.value)) {
+                    let arg;
+
+                    if (peek() && peek().type === "(") {
+                        take();
+                        arg = expressionNode();
+
+                        if (!peek() || take().type !== ")") {
+                            throw new Error(
+                                "Missing closing parenthesis."
+                            );
+                        }
+                    } else {
+                        arg = primary();
+                    }
+
+                    return {
+                        type: "func",
+                        name: t.value,
+                        arg
+                    };
+                }
+
+                throw new Error(
+                    `Unknown name "${t.value}".`
+                );
+            }
+
+            if (t.type === "(") {
+                const node = expressionNode();
+
+                if (!peek() || take().type !== ")") {
+                    throw new Error(
+                        "Missing closing parenthesis."
+                    );
+                }
+
+                return node;
+            }
+
+            if (t.type === "+" || t.type === "-") {
+                return {
+                    type: "unary",
+                    op: t.type,
+                    arg: expressionNode(25)
+                };
+            }
+
+            throw new Error("Unexpected symbol in equation.");
+        }
+
+        function expressionNode(minPrec = 0) {
+            let left = primary();
+
+            while (true) {
+                const t = peek();
+                let op;
+                let prec;
+                let implicit = false;
+
+                if (!t) break;
+
+                if (["+", "-", "*", "/", "^"].includes(t.type)) {
+                    op = t.type;
+
+                    prec = {
+                        "+": 10,
+                        "-": 10,
+                        "*": 20,
+                        "/": 20,
+                        "^": 30
+                    }[op];
+                } else if (startsPrimary(t)) {
+                    // Allow 2x, 3(x+1), and similar expressions.
+                    op = "*";
+                    prec = 20;
+                    implicit = true;
+                } else {
+                    break;
+                }
+
+                if (prec < minPrec) break;
+
+                if (!implicit) take();
+
+                const right = expressionNode(
+                    prec + (op === "^" ? 0 : 1)
+                );
+
+                left = {
+                    type: "bin",
+                    op,
+                    left,
+                    right
+                };
+            }
+
+            return left;
+        }
+
+        const tree = expressionNode();
+
+        if (pos !== tokens.length) {
+            throw new Error(
+                "Could not read the whole equation. Check your operators."
+            );
+        }
+
+        return x => evaluate(tree, x);
+    }
+
+    // Calculate the value of the parsed expression.
+    function evaluate(n, x) {
+        switch (n.type) {
+            case "num":
+                return n.value;
+
+            case "x":
+                return x;
+
+            case "unary":
+                return n.op === "-"
+                    ? -evaluate(n.arg, x)
+                    : evaluate(n.arg, x);
+
+            case "bin": {
+                const a = evaluate(n.left, x);
+                const b = evaluate(n.right, x);
+
+                switch (n.op) {
+                    case "+": return a + b;
+                    case "-": return a - b;
+                    case "*": return a * b;
+                    case "/": return a / b;
+                    case "^": return Math.pow(a, b);
+                }
+                break;
+            }
+
+            case "func": {
+                const a = evaluate(n.arg, x);
+
+                switch (n.name) {
+                    case "sin": return Math.sin(a);
+                    case "cos": return Math.cos(a);
+                    case "tan": return Math.tan(a);
+                    case "sqrt": return Math.sqrt(a);
+                    case "abs": return Math.abs(a);
+                    case "log":
+                    case "ln": return Math.log(a);
+                    case "exp": return Math.exp(a);
+                    case "floor": return Math.floor(a);
+                    case "ceil": return Math.ceil(a);
+                }
+            }
+        }
+
+        return NaN;
+    }
+
+    function niceStep(raw) {
+        const power = Math.pow(
+            10,
+            Math.floor(Math.log10(raw))
+        );
+
+        const fraction = raw / power;
+
+        return (
+            fraction < 1.5 ? 1 :
+            fraction < 3.5 ? 2 :
+            fraction < 7.5 ? 5 : 10
+        ) * power;
+    }
+
+    // Keep the canvas sharp on high-resolution screens.
+    function resize() {
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+
+        canvas.width = Math.round(rect.width * dpr);
+        canvas.height = Math.round(rect.height * dpr);
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        draw();
+    }
+
+    // Draw the grid, axes, labels, and equation.
+    function draw() {
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+
+        if (!w || !h) return;
+
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = "#0a1020";
+        ctx.fillRect(0, 0, w, h);
+
+        const pxPerUnit = 1 / unitsPerPixel;
+        const ox = w / 2 - centerX * pxPerUnit;
+        const oy = h / 2 + centerY * pxPerUnit;
+
+        const step = niceStep(unitsPerPixel * 70);
+
+        // Grid lines.
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "#202d45";
+        ctx.beginPath();
+
+        const xStart = Math.floor(
+            (0 - ox) / (step * pxPerUnit)
+        ) - 1;
+
+        const xEnd = Math.ceil(
+            (w - ox) / (step * pxPerUnit)
+        ) + 1;
+
+        for (let i = xStart; i <= xEnd; i++) {
+            const x = ox + i * step * pxPerUnit;
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, h);
+        }
+
+        const yStart = Math.floor(
+            (oy - h) / (step * pxPerUnit)
+        ) - 1;
+
+        const yEnd = Math.ceil(
+            oy / (step * pxPerUnit)
+        ) + 1;
+
+        for (let i = yStart; i <= yEnd; i++) {
+            const y = oy - i * step * pxPerUnit;
+            ctx.moveTo(0, y);
+            ctx.lineTo(w, y);
+        }
+
+        ctx.stroke();
+
+        // X and Y axes.
+        ctx.strokeStyle = "#b9c8df";
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+
+        if (ox >= 0 && ox <= w) {
+            ctx.moveTo(ox, 0);
+            ctx.lineTo(ox, h);
+        }
+
+        if (oy >= 0 && oy <= h) {
+            ctx.moveTo(0, oy);
+            ctx.lineTo(w, oy);
+        }
+
+        ctx.stroke();
+
+        // Tick labels.
+        ctx.fillStyle = "#a9b8d2";
+        ctx.font = "12px system-ui";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+
+        for (let i = xStart; i <= xEnd; i++) {
+            const val = i * step;
+            const x = ox + val * pxPerUnit;
+
+            if (
+                x > 18 &&
+                x < w - 18 &&
+                Math.abs(oy) < h - 18
+            ) {
+                ctx.fillText(
+                    Number(val.toPrecision(5)),
+                    x,
+                    Math.max(4, Math.min(h - 18, oy + 5))
+                );
+            }
+        }
+
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+
+        for (let i = yStart; i <= yEnd; i++) {
+            const val = i * step;
+            const y = oy - val * pxPerUnit;
+
+            if (
+                y > 14 &&
+                y < h - 14 &&
+                Math.abs(ox) < w - 30
+            ) {
+                ctx.fillText(
+                    Number(val.toPrecision(5)),
+                    Math.max(28, Math.min(w - 4, ox - 7)),
+                    y
+                );
+            }
+        }
+
+        // Axis names.
+        ctx.fillStyle = "#e8eefc";
+        ctx.font = "bold 14px system-ui";
+
+        if (ox >= 0 && ox <= w) {
+            ctx.textAlign = "left";
+            ctx.fillText("y", Math.min(w - 18, ox + 8), 8);
+        }
+
+        if (oy >= 0 && oy <= h) {
+            ctx.textAlign = "right";
+            ctx.fillText("x", w - 9, Math.max(8, oy - 22));
+        }
+
+        // Plot the equation.
+        ctx.strokeStyle = "#ffb454";
+        ctx.lineWidth = 2.5;
+        ctx.lineJoin = "round";
+        ctx.beginPath();
+
+        let drawing = false;
+        let lastYpx = null;
+
+        for (let sx = 0; sx <= w; sx += 1.5) {
+            const x = (sx - ox) / pxPerUnit;
+            const y = expression(x);
+            const sy = oy - y * pxPerUnit;
+
+            if (
+                Number.isFinite(y) &&
+                Number.isFinite(sy) &&
+                Math.abs(sy) < h * 5
+            ) {
+                if (
+                    !drawing ||
+                    (
+                        lastYpx !== null &&
+                        Math.abs(sy - lastYpx) > h * 1.5
+                    )
+                ) {
+                    ctx.moveTo(sx, sy);
+                    drawing = true;
+                } else {
+                    ctx.lineTo(sx, sy);
+                }
+
+                lastYpx = sy;
+            } else {
+                drawing = false;
+                lastYpx = null;
+            }
+        }
+
+        ctx.stroke();
+
+        const left = (0 - ox) / pxPerUnit;
+        const right = (w - ox) / pxPerUnit;
+        const top = (oy - h) / pxPerUnit;
+        const bottom = oy / pxPerUnit;
+
+        scaleLabel.textContent =
+            `x: ${left.toFixed(1)} to ${right.toFixed(1)} · ` +
+            `y: ${top.toFixed(1)} to ${bottom.toFixed(1)}`;
+    }
+
+    function graph() {
+        try {
+            expression = parse(input.value);
+
+            message.textContent =
+                "Graph plotted! Supported: +, -, *, /, powers (^), " +
+                "parentheses, sin, cos, tan, sqrt, abs, log, ln, exp.";
+
+            message.classList.remove("error");
+            draw();
+        } catch (e) {
+            message.textContent = e.message;
+            message.classList.add("error");
+        }
+    }
+
+    // Submit the equation.
+    document.getElementById("equationForm")
+        .addEventListener("submit", e => {
+            e.preventDefault();
+            graph();
+        });
+
+    // Example equation buttons.
+    document.querySelectorAll(".example").forEach(btn => {
+        btn.addEventListener("click", () => {
+            input.value = btn.dataset.eq;
+            graph();
+        });
+    });
+
+    // Reset the coordinate plane.
+    document.getElementById("resetBtn")
+        .addEventListener("click", () => {
+            centerX = 0;
+            centerY = 0;
+            unitsPerPixel = 20 / 600;
+            draw();
+        });
+
+    // Zoom using the mouse wheel.
+    canvas.addEventListener("wheel", e => {
+        e.preventDefault();
+
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+
+        const oldScale = 1 / unitsPerPixel;
+        const factor = e.deltaY < 0 ? 1.15 : 1 / 1.15;
+
+        const newScale = Math.max(
+            8,
+            Math.min(1500, oldScale * factor)
+        );
+
+        const xBefore =
+            (mx - canvas.clientWidth / 2 + centerX * oldScale)
+            / oldScale;
+
+        const yBefore =
+            (canvas.clientHeight / 2 - my + centerY * oldScale)
+            / oldScale;
+
+        unitsPerPixel = 1 / newScale;
+
+        centerX =
+            xBefore -
+            (mx - canvas.clientWidth / 2) / newScale;
+
+        centerY =
+            yBefore -
+            (canvas.clientHeight / 2 - my) / newScale;
+
+        draw();
+    }, { passive: false });
+
+    // Drag to pan around the grid.
+    canvas.addEventListener("pointerdown", e => {
+        dragging = true;
+        lastX = e.clientX;
+        lastY = e.clientY;
+        canvas.setPointerCapture(e.pointerId);
+    });
+
+    canvas.addEventListener("pointermove", e => {
+        if (!dragging) return;
+
+        const dx = e.clientX - lastX;
+        const dy = e.clientY - lastY;
+
+        centerX -= dx * unitsPerPixel;
+        centerY += dy * unitsPerPixel;
+
+        lastX = e.clientX;
+        lastY = e.clientY;
+
+        draw();
+    });
+
+    canvas.addEventListener("pointerup", () => {
+        dragging = false;
+    });
+
+    canvas.addEventListener("pointercancel", () => {
+        dragging = false;
+    });
+
+    window.addEventListener("resize", resize);
+
+    resize();
+    graph();
+})();
+</script>
+</body>
+</html>

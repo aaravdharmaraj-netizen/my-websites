@@ -1,0 +1,555 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verity Escape</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            background: #030303;
+            color: white;
+            font-family: "Courier New", monospace;
+        }
+
+        /* MAIN TITLE SCREEN */
+        .title-screen {
+            position: relative;
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            align-items: center;
+            justify-content: center;
+            background:
+                radial-gradient(ellipse at 75% 50%, #24100030, transparent 45%),
+                #030303;
+        }
+
+        /* SCANLINES */
+        .scanlines {
+            position: absolute;
+            inset: 0;
+            z-index: 10;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0px,
+                transparent 3px,
+                #00000070 4px
+            );
+        }
+
+        /* SUBTLE SCREEN FLICKER */
+        .title-screen::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 9;
+            pointer-events: none;
+            background: #ffffff;
+            opacity: 0;
+            animation: screenFlicker 6s infinite;
+        }
+
+        @keyframes screenFlicker {
+            0%, 93%, 95%, 97%, 100% {
+                opacity: 0;
+            }
+            94% {
+                opacity: 0.035;
+            }
+            96% {
+                opacity: 0.015;
+            }
+        }
+
+        /* GAME TITLE */
+        .title {
+            position: absolute;
+            z-index: 3;
+            top: 20%;
+            left: 50%;
+            width: 100%;
+            padding: 0 15px;
+            transform: translateX(-50%);
+            text-align: center;
+            font-size: clamp(42px, 8vw, 100px);
+            font-weight: 900;
+            letter-spacing: 8px;
+            color: #f2f2f2;
+            text-shadow:
+                3px 0 #ff0000,
+                -3px 0 #00ffff,
+                0 0 18px #ffffff40;
+            animation: titleGlitch 4s infinite;
+        }
+
+        @keyframes titleGlitch {
+            0%, 88%, 90%, 94%, 100% {
+                transform: translateX(-50%);
+                text-shadow:
+                    3px 0 #ff0000,
+                    -3px 0 #00ffff,
+                    0 0 18px #ffffff40;
+            }
+
+            89% {
+                transform: translateX(calc(-50% - 5px));
+                text-shadow:
+                    6px 0 #ff0000,
+                    -6px 0 #00ffff;
+            }
+
+            92% {
+                transform: translateX(calc(-50% + 4px));
+                text-shadow:
+                    -5px 0 #ff0000,
+                    5px 0 #00ffff;
+            }
+        }
+
+        /* TITLE GLITCH DUPLICATES */
+        .title::before,
+        .title::after {
+            content: "VERITY ESCAPE";
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .title::before {
+            color: #ff0000;
+            clip-path: inset(0 0 65% 0);
+            animation: redGlitch 3s infinite steps(1);
+        }
+
+        .title::after {
+            color: #00ffff;
+            clip-path: inset(65% 0 0 0);
+            animation: blueGlitch 2.5s infinite steps(1);
+        }
+
+        @keyframes redGlitch {
+            0%, 85%, 89%, 100% {
+                transform: translate(0);
+            }
+            86% {
+                transform: translate(7px, -2px);
+            }
+            88% {
+                transform: translate(-5px, 2px);
+            }
+        }
+
+        @keyframes blueGlitch {
+            0%, 72%, 76%, 100% {
+                transform: translate(0);
+            }
+            73% {
+                transform: translate(-7px, 2px);
+            }
+            75% {
+                transform: translate(5px, -2px);
+            }
+        }
+
+        /* START BUTTON */
+        .start-button {
+            position: absolute;
+            z-index: 5;
+            top: 55%;
+            left: 35%;
+            transform: translate(-50%, -50%);
+            padding: 17px 55px;
+            color: #eeeeee;
+            background: #090909;
+            border: 2px solid #8b0000;
+            font-family: inherit;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            cursor: default;
+            box-shadow:
+                0 0 12px #ff000030,
+                inset 0 0 12px #ff000010;
+            transition: 0.2s;
+        }
+
+        .start-button:hover {
+            color: #ffffff;
+            border-color: #ff2020;
+            box-shadow:
+                0 0 18px #ff000080,
+                inset 0 0 15px #ff000025;
+        }
+
+        /* VERITY CONTAINER */
+        .verity-container {
+            position: absolute;
+            z-index: 2;
+            top: 52%;
+            left: 73%;
+            width: clamp(220px, 29vw, 390px);
+            aspect-ratio: 1;
+            transform: translate(-50%, -50%);
+            animation: verityFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes verityFloat {
+            0%, 100% {
+                transform: translate(-50%, -50%);
+            }
+            50% {
+                transform: translate(-50%, calc(-50% - 9px));
+            }
+        }
+
+        /* VERITY'S YELLOW BALL */
+        .verity {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            border-radius: 50%;
+            background: radial-gradient(
+                circle at 32% 25%,
+                #fff47a 0%,
+                #ffdf00 40%,
+                #e4a900 78%,
+                #765000 100%
+            );
+            box-shadow:
+                inset -14px -16px 22px #00000055,
+                inset 6px 5px 12px #ffffff55,
+                0 0 35px #ffdf0020;
+        }
+
+        /* SHINY HIGHLIGHT */
+        .verity::before {
+            content: "";
+            position: absolute;
+            top: 9%;
+            left: 17%;
+            width: 30%;
+            height: 13%;
+            border-radius: 50%;
+            background: #ffffff70;
+            filter: blur(8px);
+            transform: rotate(-30deg);
+        }
+
+        /* GLOWING RED EYES */
+        .eye {
+            position: absolute;
+            top: 30%;
+            width: 13%;
+            height: 16%;
+            border-radius: 50%;
+            background: #ff0000;
+            box-shadow:
+                0 0 5px #ff0000,
+                0 0 12px #ff0000,
+                0 0 24px #ff1717,
+                0 0 38px #ff000080;
+            animation: eyePulse 2s ease-in-out infinite;
+        }
+
+        .eye.left {
+            left: 25%;
+        }
+
+        .eye.right {
+            right: 25%;
+        }
+
+        @keyframes eyePulse {
+            0%, 100% {
+                opacity: 0.8;
+                box-shadow:
+                    0 0 5px #ff0000,
+                    0 0 12px #ff0000,
+                    0 0 24px #ff1717;
+            }
+
+            50% {
+                opacity: 1;
+                box-shadow:
+                    0 0 8px #ff0000,
+                    0 0 20px #ff0000,
+                    0 0 40px #ff1717,
+                    0 0 55px #ff0000;
+            }
+        }
+
+        /* WIDE, SCARY SMILE */
+        .mouth {
+            position: absolute;
+            left: 50%;
+            top: 48%;
+            width: 54%;
+            height: 29%;
+            transform: translateX(-50%);
+            overflow: hidden;
+            background: #180600;
+            border: 3px solid #341000;
+            border-radius: 8% 8% 48% 48%;
+            box-shadow:
+                0 0 12px #00000080,
+                inset 0 5px 0 #000000;
+        }
+
+        /* UPPER JAGGED TEETH */
+        .mouth::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 4%;
+            width: 92%;
+            height: 34%;
+            background: repeating-linear-gradient(
+                90deg,
+                #fff5d6 0px,
+                #fff5d6 8px,
+                #321000 8px,
+                #321000 11px
+            );
+            clip-path: polygon(
+                0 0,
+                100% 0,
+                96% 100%,
+                85% 65%,
+                76% 100%,
+                65% 65%,
+                54% 100%,
+                43% 65%,
+                32% 100%,
+                21% 65%,
+                10% 100%,
+                0 65%
+            );
+        }
+
+        /* LOWER JAGGED TEETH */
+        .mouth::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 8%;
+            width: 84%;
+            height: 25%;
+            background: #fff0c4;
+            clip-path: polygon(
+                0 100%,
+                100% 100%,
+                90% 0,
+                78% 100%,
+                65% 0,
+                52% 100%,
+                39% 0,
+                26% 100%,
+                13% 0
+            );
+        }
+
+        /* SMALL HORROR TEXT */
+        .subtitle {
+            position: absolute;
+            z-index: 3;
+            top: 31%;
+            left: 50%;
+            width: 100%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: #777777;
+            font-size: clamp(10px, 1.4vw, 15px);
+            letter-spacing: 5px;
+        }
+
+        /* VERSION TEXT */
+        .version {
+            position: absolute;
+            bottom: 18px;
+            left: 20px;
+            z-index: 5;
+            color: #555555;
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+
+        /* RESPONSIVE LAYOUT */
+        @media (max-width: 650px) {
+            .title {
+                top: 16%;
+                letter-spacing: 3px;
+            }
+
+            .subtitle {
+                top: 27%;
+                letter-spacing: 2px;
+            }
+
+            .verity-container {
+                top: 64%;
+                left: 70%;
+                width: 48vw;
+                min-width: 170px;
+            }
+
+            .start-button {
+                top: 61%;
+                left: 29%;
+                padding: 14px 25px;
+                font-size: 18px;
+                letter-spacing: 3px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+        }
+
+
+
+
+/* HORIZONTAL STATIC / VHS INTERFERENCE */
+.title-screen {
+    isolation: isolate;
+}
+
+.static-lines {
+    position: absolute;
+    inset: 0;
+    z-index: 8;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.static-lines::before,
+.static-lines::after {
+    content: "";
+    position: absolute;
+    inset: -100% 0;
+    width: 100%;
+    height: 300%;
+    pointer-events: none;
+}
+
+.static-lines::before {
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 7px,
+        rgba(190, 190, 190, 0.22) 8px,
+        transparent 9px,
+        transparent 17px
+    );
+    animation: staticScroll 0.35s steps(5, end) infinite;
+}
+
+.static-lines::after {
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 43px,
+        rgba(220, 220, 220, 0.4) 44px,
+        rgba(100, 100, 100, 0.18) 46px,
+        transparent 48px,
+        transparent 91px
+    );
+    animation: staticFlicker 2.8s steps(1, end) infinite;
+}
+
+@keyframes staticScroll {
+    0%   { transform: translateY(0); }
+    20%  { transform: translateY(-12px); }
+    40%  { transform: translateY(8px); }
+    60%  { transform: translateY(-5px); }
+    80%  { transform: translateY(14px); }
+    100% { transform: translateY(0); }
+}
+
+@keyframes staticFlicker {
+    0%, 15%, 18%, 43%, 47%, 72%, 100% {
+        opacity: 0;
+        transform: translateY(0);
+    }
+
+    16% {
+        opacity: 1;
+        transform: translateY(-35px);
+    }
+
+    17% {
+        opacity: 0.4;
+        transform: translateY(22px);
+    }
+
+    44% {
+        opacity: 0.8;
+        transform: translateY(55px);
+    }
+
+    46% {
+        opacity: 0.2;
+        transform: translateY(-18px);
+    }
+
+    73% {
+        opacity: 1;
+        transform: translateY(-65px);
+    }
+
+    75% {
+        opacity: 0.5;
+        transform: translateY(30px);
+    }
+}
+
+    </style>
+</head>
+
+<body>
+    <main class="title-screen">
+
+        <h1 class="title">VERITY ESCAPE</h1>
+
+        <p class="subtitle">DON'T LET HIM FIND YOU</p>
+
+        <!-- START is intentionally inactive for now -->
+        <button class="start-button" type="button" aria-label="Start game (not active yet)">
+            START
+        </button>
+
+        <!-- VERITY -->
+        <div class="verity-container" aria-label="Verity">
+            <div class="verity">
+                <div class="eye left"></div>
+                <div class="eye right"></div>
+                <div class="mouth"></div>
+            </div>
+        </div>
+
+        <div class="version">VERITY ESCAPE // v0.1</div>
+
+        <div class="scanlines"></div>
+    </main>
+</body>
+</html>

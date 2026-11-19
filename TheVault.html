@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Vault</title>
+
+<style>
+body {
+    background: linear-gradient(135deg, #9b0ff8, #430070);
+    font-family: Arial, sans-serif;
+    color: white;
+    text-align: center;
+}
+html, body {
+    height: 100%;
+}
+
+.vaulttitle {
+    padding: 36px;
+    font-size: 60px;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Text box */
+input[type="text"] {
+    font-size: 28px;
+    padding: 12px;
+    width: 60%;
+    max-width: 400px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    margin-top: 20px;
+}
+
+/* Button */
+button {
+    font-size: 26px;
+    padding: 12px 30px;
+    margin-top: 20px;
+    border-radius: 10px;
+    border: none;
+    background: #ffffff;
+    color: #430070;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #e6e6e6;
+}
+
+/* Result box */
+#result {
+    margin-top: 30px;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+/* POPUP MENU */
+#popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    color: #430070;
+    padding: 30px;
+    border-radius: 15px;
+    width: 70%;
+    max-width: 500px;
+    box-shadow: 0 0 25px black;
+    font-size: 24px;
+    text-align: left;
+}
+
+#popup h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#closePopup {
+    margin-top: 20px;
+    font-size: 22px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    background: #430070;
+    color: white;
+    cursor: pointer;
+    width: 100%;
+}
+
+#closePopup:hover {
+    background: #5a0099;
+}
+</style>
+</head>
+
+<body>
+
+<h1 class="vaulttitle">The Vault</h1>
+
+<!-- Text box -->
+<input type="text" id="vaultInput" placeholder="Enter Vault Code">
+
+<!-- Button -->
+<button onclick="checkCode()">ENTER</button>
+
+<!-- Result -->
+<div id="result"></div>
+
+<!-- POPUP MENU -->
+<div id="popup">
+    <h2>All Vault Codes</h2>
+    <ul>
+        <li>spooky</li>
+        <li>67</li>
+        <li>61</li>
+        <li>thechick</li>
+        <li>A4R4V24</li>
+        <li>experimentor</li>
+        <li>543212345</li>
+        <li>gamble</li>
+        <li>destroyerofworlds</li>
+        <li>nauehgir3w112</li>
+        <li>mypasswordis4</li>
+        <li>thebaldisbasics</li>
+        <li>65wr3vH8d</li>
+        <li>helloworld!</li>
+        <li>copilot</li>
+    </ul>
+
+    <button id="closePopup" onclick="closePopup()">Close</button>
+</div>
+
+<script>
+// Funny messages for each code
+const messages = {
+    "spooky": "👻What? Too scared?",
+    "67": "Dude, that meme is over.",
+    "61": "61 is the BEST NUMBER IN EXISTENCE +10 mil aura",
+    "thechick": "🐔What came first? The chicken or the egg?",
+    "A4R4V24": "Search that up on Scratch.mit.edu! Its me!",
+    "experimentor": "🧪 Amateur move to type the NAME OF THIS WEBSITE!",
+    "543212345": "Here's all the codes to the vault!",
+    "gamble": "🎲Never gamble its bad",
+    "destroyerofworlds": "🌎💥u referencing caseoh?",
+    "nauehgir3w112": "wow you actually can type?",
+    "mypasswordis4": "BANISH THYSELF FROM THY EXISTENCE!!!!!!!!!",
+    "thebaldisbasics": "🧑‍🏫 u so dum u cant do badis basics cuz u suck at math",
+    "65wr3vH8d": "This is my password!(jk)",
+    "helloworld!": "🌍 Goodbye, cruel world.....",
+    "copilot": "🤖 One of my partners in this website!"
+};
+
+function checkCode() {
+    const input = document.getElementById("vaultInput").value.trim();
+    const result = document.getElementById("result");
+
+    if (messages[input]) {
+        // Special popup case
+        if (input === "543212345") {
+            result.innerHTML = `<span style="color: lime; cursor:pointer;" onclick="openPopup()">Click me!</span>`;
+        } else {
+            result.style.color = "lime";
+            result.textContent = messages[input];
+        }
+    } else {
+        result.style.color = "red";
+        result.textContent = "ACCESS DENIED";
+    }
+}
+
+// OPEN POPUP
+function openPopup() {
+    document.getElementById("popup").style.display = "block";
+}
+
+// CLOSE POPUP
+function closePopup() {
+    document.getElementById("popup").style.display = "none";
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Experimentor</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        background-color: #050505;
+        color: #ff7b00;
+        text-align: center;
+        padding-top: 40px;
+    }
+
+    /* HEADER */
+    header {
+        background-color: #0a0a0a;
+        color: #ff7b00;
+        font-size: 50px;
+        text-align: center;
+        border: 6px solid #ff7b00;
+        margin: 10px auto;
+        padding: 20px;
+        border-radius: 7px;
+        width: 70%;
+
+        /* Neon glow */
+        box-shadow:
+            0 0 10px #ff7b00,
+            0 0 25px rgba(255, 123, 0, 0.6),
+            inset 0 0 15px rgba(255, 123, 0, 0.15);
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 60px;
+
+        /* Neon text */
+        text-shadow:
+            0 0 5px #ff7b00,
+            0 0 15px #ff7b00,
+            0 0 30px rgba(255, 123, 0, 0.7);
+    }
+
+    header h2 {
+        margin: 10px 0 0 0;
+        font-size: 28px;
+        font-weight: normal;
+        color: #ff9d3d;
+    }
+
+    /* SECTION BUTTONS */
+    main {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 40px;
+    }
+
+    a.section {
+        background-color: #080808;
+        color: #ff7b00;
+        font-size: 30px;
+        text-align: center;
+        border: 6px solid #ff7b00;
+        padding: 20px;
+        border-radius: 7px;
+        width: 250px;
+        height: 150px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        transition: 0.2s;
+
+        /* Neon glow */
+        box-shadow:
+            0 0 8px #ff7b00,
+            0 0 18px rgba(255, 123, 0, 0.45),
+            inset 0 0 12px rgba(255, 123, 0, 0.1);
+    }
+
+    a.section:hover {
+        background-color: #151515;
+        color: #ffae42;
+        transform: scale(1.05);
+
+        box-shadow:
+            0 0 12px #ff7b00,
+            0 0 30px #ff7b00,
+            0 0 50px rgba(255, 123, 0, 0.5),
+            inset 0 0 20px rgba(255, 123, 0, 0.2);
+
+        text-shadow:
+            0 0 5px #ff7b00,
+            0 0 15px #ff7b00;
+    }
+
+    /* SECRET BUTTON */
+    #secretButton {
+        display: none;
+        margin-top: 40px;
+        padding: 15px 30px;
+        font-size: 24px;
+        border-radius: 7px;
+        background-color: #080808;
+        color: #ff7b00;
+        border: 6px solid #ff7b00;
+        cursor: pointer;
+
+        box-shadow:
+            0 0 10px #ff7b00,
+            0 0 25px rgba(255, 123, 0, 0.5);
+
+        transition: 0.2s;
+    }
+
+    #secretButton:hover {
+        background-color: #151515;
+        transform: scale(1.05);
+
+        box-shadow:
+            0 0 15px #ff7b00,
+            0 0 35px #ff7b00;
+    }
+
+    /* Hidden trigger */
+    #trigger {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        font-size: 14px;
+        color: #ff7b00;
+        opacity: 0.3;
+        cursor: pointer;
+    }
+
+    #trigger:hover {
+        opacity: 1;
+        text-shadow: 0 0 10px #ff7b00;
+    }
+
+    /* Poop emoji animation */
+    .poop {
+        position: absolute;
+        font-size: 40px;
+        animation: fly 2s linear forwards;
+    }
+
+    @keyframes fly {
+        from {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        to {
+            transform: translateY(-200px);
+            opacity: 0;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>EXPERIMENTOR</h1>
+    <h2>The Site for Flight</h2>
+</header>
+
+<main>
+    <a class="section" href="BIRD.html">BIRD</a>
+    <a class="section" href="TheVault.html">The Vault</a>
+    <a class="section" href="IdleClicker.html">Idle Clicker</a>
+</main>
+
+<button id="secretButton">543212345</button>
+
+<span id="trigger">secret</span>
+
+<script>
+    // Reveal secret button
+    document.getElementById("trigger").onclick = function() {
+        document.getElementById("secretButton").style.display = "inline-block";
+    };
+
+    // Poop blast effect
+    document.getElementById("secretButton").onclick = function() {
+        for (let i = 0; i < 10; i++) {
+            let poop = document.createElement("div");
+            poop.className = "poop";
+            poop.innerHTML = "💩";
+            poop.style.left = Math.random() * window.innerWidth + "px";
+            poop.style.top = "600px";
+            document.body.appendChild(poop);
+
+            setTimeout(() => poop.remove(), 2000);
+        }
+    };
+</script>
+
+</body>
+</html>
+```

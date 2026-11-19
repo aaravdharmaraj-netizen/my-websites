@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiments</title>
+    <style>
+body {
+    background:linear-gradient(to right, #ffffff, #f8f8f8)
+}
+
+
+header {
+    background-color:rgb(255, 255, 255);
+    color:rgb(46, 46, 46);
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size:50px;
+    text-align:center;
+    border:6px, black, solid;
+    margin:2px;
+    padding: 20px;
+    border-radius: 7px;
+}
+
+section {
+    background-color:rgb(255, 255, 255);
+    color:rgb(46, 46, 46);
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size:30px;
+    text-align:center;
+    border:6px, rgb(230, 228, 211), solid;
+    margin:2px;
+    padding: 20px;
+    border-radius: 7px;
+}
+
+.link2 {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.25s ease, background-color 0.25s ease;
+}
+
+.link2:hover {
+    background-color: #f0f0f0;
+    transform:scale(0.9);
+    cursor: pointer;
+}
+
+.link2:active {
+    opacity: 0.7;
+}
+
+
+    </style>
+</head>
+<body>
+
+<header>
+<h1>Essentials for Life</h1>
+</header>
+
+kjfddinjdfidfjdfjbdb
+
+
+<a class="link2" href=></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
+

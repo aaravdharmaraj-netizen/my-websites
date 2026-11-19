@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Idle Clicker</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        background-color: rgb(240, 240, 240);
+        text-align: center;
+        padding-top: 40px;
+        overflow-x: hidden;
+    }
+
+    header {
+        background-color: rgb(255, 255, 255);
+        color: rgb(46, 46, 46);
+        font-size: 50px;
+        text-align: center;
+        border: 6px solid black;
+        margin: 10px auto;
+        padding: 20px;
+        border-radius: 7px;
+        width: 70%;
+    }
+
+    #clicker {
+        font-size: 120px;
+        cursor: pointer;
+        margin-top: 40px;
+        user-select: none;
+        transition: transform 0.15s ease;
+    }
+
+    #clicker.bounce {
+        transform: scale(1.25);
+    }
+
+    #counter {
+        font-size: 40px;
+        margin-top: 20px;
+    }
+
+    /* Shop button */
+    #shopButton {
+        display: none;
+        position: fixed;
+        right: 20px;
+        top: 150px;
+        background: white;
+        border: 4px solid black;
+        padding: 15px 25px;
+        border-radius: 7px;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    /* Shop popup */
+    #shopPopup {
+        display: none;
+        position: fixed;
+        right: 20px;
+        top: 220px;
+        width: 250px;
+        background: white;
+        border: 4px solid black;
+        border-radius: 7px;
+        padding: 20px;
+        text-align: center;
+    }
+
+    /* Shop item */
+    .shopItem {
+        background: rgb(255, 255, 255);
+        border: 4px solid rgb(230, 228, 211);
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 22px;
+    }
+
+    .coin {
+        position: absolute;
+        top: 200px;
+        font-size: 50px;
+        cursor: pointer;
+        animation: glide 6s linear forwards;
+    }
+
+    @keyframes glide {
+        from { left: -100px; }
+        to { left: 110%; }
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    IDLE CLICKER
+</header>
+
+<div id="clicker">🙂</div>
+<div id="counter">Clicks: 0</div>
+
+<!-- Shop button -->
+<button id="shopButton">Shop</button>
+
+<!-- Shop popup -->
+<div id="shopPopup">
+    <h3>Shop</h3>
+
+    <div id="mouseUpgrade" class="shopItem">
+        🖱️ Mouse Cursor<br>
+        +10 clicks per click<br>
+        Cost: 100 clicks
+    </div>
+</div>
+
+<script>
+    let clicks = 0;
+    let clickPower = 1;
+    let mouseBought = false;
+
+    const emojiStages = [
+        { limit: 1, emoji: "🙂" },
+        { limit: 100, emoji: "😀" },
+        { limit: 1000, emoji: "😎" },
+        { limit: 5000, emoji: "🔥" },
+        { limit: 10000, emoji: "💥" },
+        { limit: 100000, emoji: "🌟" },
+        { limit: 1000000, emoji: "💎" },
+        { limit: 5000000, emoji: "👑" },
+        { limit: 100000000, emoji: "🚀" },
+        { limit: 500000000, emoji: "🪐" },
+        { limit: 1000000000, emoji: "🌌" },
+        { limit: 1000000000000, emoji: "✨" }
+    ];
+
+    function updateEmoji() {
+        for (let stage of emojiStages) {
+            if (clicks >= stage.limit) {
+                document.getElementById("clicker").innerHTML = stage.emoji;
+            }
+        }
+    }
+
+    const clicker = document.getElementById("clicker");
+
+    function doClick() {
+        clicks += clickPower;
+        document.getElementById("counter").innerHTML = "Clicks: " + clicks;
+        updateEmoji();
+
+        clicker.classList.add("bounce");
+        setTimeout(() => clicker.classList.remove("bounce"), 150);
+
+        if (clicks >= 100) {
+            document.getElementById("shopButton").style.display = "block";
+        }
+    }
+
+    clicker.onclick = doClick;
+
+    document.body.onkeydown = function(e) {
+        if (e.code === "Space") {
+            doClick();
+        }
+    };
+
+    /* Shop button toggle */
+    document.getElementById("shopButton").onclick = function() {
+        let popup = document.getElementById("shopPopup");
+        popup.style.display = popup.style.display === "block" ? "none" : "block";
+    };
+
+    /* Mouse upgrade */
+    document.getElementById("mouseUpgrade").onclick = function() {
+        if (!mouseBought && clicks >= 100) {
+            clicks -= 100;
+            clickPower = 10;
+            mouseBought = true;
+
+            document.getElementById("counter").innerHTML = "Clicks: " + clicks;
+            this.innerHTML = "🖱️ Mouse Cursor<br>Purchased!";
+            this.style.background = "#d0ffd0";
+        }
+    };
+
+    /* Coin spawns every 300 seconds */
+    function spawnCoin() {
+        let coin = document.createElement("div");
+        coin.className = "coin";
+        coin.innerHTML = "🪙";
+        coin.style.top = (Math.random() * 300 + 100) + "px";
+        document.body.appendChild(coin);
+
+        coin.onclick = function() {
+            clicks = Math.floor(clicks * 2);
+            document.getElementById("counter").innerHTML = "Clicks: " + clicks;
+            updateEmoji();
+            coin.remove();
+        };
+
+        setTimeout(() => coin.remove(), 6000);
+    }
+
+    setInterval(spawnCoin, 300000);
+</script>
+
+</body>
+</html>

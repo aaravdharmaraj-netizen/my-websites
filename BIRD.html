@@ -1,0 +1,624 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiments</title>
+
+    <style>
+
+/* ---------------- BLACK + ORANGE NEON THEME ---------------- */
+
+body {
+    background: #050505;
+    color: #ff7b00;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+/* HEADER */
+
+header {
+    background-color: #080808;
+    color: #ff7b00;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 50px;
+    text-align: center;
+    border: 6px solid #ff7b00;
+    margin: 10px;
+    padding: 20px;
+    border-radius: 7px;
+
+    box-shadow:
+        0 0 10px #ff7b00,
+        0 0 25px rgba(255, 123, 0, 0.5),
+        inset 0 0 15px rgba(255, 123, 0, 0.1);
+
+    text-shadow:
+        0 0 5px #ff7b00,
+        0 0 15px #ff7b00;
+}
+
+/* DESCRIPTION SECTION */
+
+section {
+    background-color: #080808;
+    color: #ff9d3d;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 30px;
+    text-align: center;
+    border: 6px solid #ff7b00;
+    margin: 10px;
+    padding: 20px;
+    border-radius: 7px;
+
+    box-shadow:
+        0 0 8px #ff7b00,
+        0 0 20px rgba(255, 123, 0, 0.35),
+        inset 0 0 12px rgba(255, 123, 0, 0.08);
+}
+
+/* LINKS */
+
+.img1 {
+    width: 25px;
+}
+
+.link3 {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.25s ease, background-color 0.25s ease;
+}
+
+.link3:hover {
+    transform: scale(1.01);
+    cursor: pointer;
+}
+
+.link3:active {
+    opacity: 0.7;
+}
+
+
+/* ---------------- BIRD UI ---------------- */
+
+.bird-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 300px;
+    gap: 10px;
+    padding: 10px;
+}
+
+
+/* PANELS */
+
+.bird-panel {
+    background: #080808;
+    border: 3px solid #ff7b00;
+    border-radius: 7px;
+
+    box-shadow:
+        0 0 8px #ff7b00,
+        0 0 20px rgba(255, 123, 0, 0.35),
+        inset 0 0 15px rgba(255, 123, 0, 0.08);
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+
+/* PANEL HEADERS */
+
+.bird-panel h2 {
+    margin: 0;
+    padding: 10px;
+
+    background: #111111;
+    color: #ff7b00;
+
+    font-size: 20px;
+    font-family: Arial, sans-serif;
+
+    border-bottom: 3px solid #ff7b00;
+
+    text-shadow:
+        0 0 5px #ff7b00,
+        0 0 10px #ff7b00;
+}
+
+
+/* CODE EDITOR */
+
+.bird-editor-area {
+    flex: 1;
+
+    background: #030303;
+    color: #ff9d3d;
+
+    border: none;
+    padding: 10px;
+
+    font-size: 30px;
+    font-family: monospace;
+
+    resize: none;
+    outline: none;
+
+    caret-color: #ff7b00;
+
+    box-shadow: inset 0 0 15px rgba(255, 123, 0, 0.08);
+}
+
+
+/* RUN BUTTON */
+
+.bird-run-btn {
+    padding: 10px;
+
+    background: #ff7b00;
+    color: #050505;
+
+    border: none;
+    cursor: pointer;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    transition: 0.2s;
+
+    box-shadow:
+        0 0 10px #ff7b00;
+}
+
+.bird-run-btn:hover {
+    background: #ff9d3d;
+
+    box-shadow:
+        0 0 15px #ff7b00,
+        0 0 30px #ff7b00;
+
+    text-shadow: 0 0 5px #000;
+}
+
+
+/* OUTPUT */
+
+#bird-outputArea {
+    flex: 1;
+
+    padding: 10px;
+
+    font-size: 18px;
+
+    overflow-y: auto;
+
+    background: #030303;
+    color: #ff9d3d;
+
+    box-shadow:
+        inset 0 0 15px rgba(255, 123, 0, 0.08);
+}
+
+
+/* RULES */
+
+#bird-rulesContent {
+    padding: 10px;
+
+    font-size: 15px;
+
+    overflow-y: auto;
+
+    background: #080808;
+    color: #ffb15c;
+}
+
+
+/* STRONG TEXT */
+
+strong {
+    color: #ff7b00;
+
+    text-shadow:
+        0 0 4px #ff7b00,
+        0 0 8px rgba(255, 123, 0, 0.5);
+}
+
+
+/* SCROLLBARS */
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #ff7b00;
+    border-radius: 5px;
+
+    box-shadow:
+        0 0 8px #ff7b00;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #ff9d3d;
+}
+
+    </style>
+</head>
+
+<body>
+
+<header>BIRD</header>
+
+<section>
+    Below is a brand new coding language: <strong>BIRD</strong>.
+</section>
+
+
+<!-- ---------------- BIRD LANGUAGE UI ---------------- -->
+
+<div class="bird-container">
+
+    <!-- Editor -->
+    <div class="bird-panel">
+
+        <h2>BIRD Code Editor</h2>
+
+        <textarea id="bird-codeInput" class="bird-editor-area">
+SAY Hello World
+COLOR #ff7b00
+SIZE 30
+SAY This is BIRD
+        </textarea>
+
+        <button id="bird-runBtn" class="bird-run-btn">
+            Run BIRD Code
+        </button>
+
+    </div>
+
+
+    <!-- Output -->
+
+    <div class="bird-panel">
+
+        <h2>Output</h2>
+
+        <div id="bird-outputArea"></div>
+
+    </div>
+
+
+    <!-- Rules -->
+
+    <div class="bird-panel">
+
+        <h2>BIRD Language Rules</h2>
+
+        <div id="bird-rulesContent">
+
+            <strong>BIRD Syntax Overview</strong><br><br>
+
+            <strong>1. SAY [text]</strong><br>
+            Prints text.<br><br>
+
+            <strong>2. COLOR [name]</strong><br>
+            Sets text color.<br><br>
+
+            <strong>3. SIZE [number]</strong><br>
+            Sets font size in pixels.<br><br>
+
+            <strong>4. NEWLINE</strong><br>
+            Adds a line break.<br><br>
+
+            <strong>5. BOX [text]</strong><br>
+            Draws a bordered box.<br><br>
+
+            <strong>6. REPEAT [n] { ... }</strong><br>
+            Loops commands.<br><br>
+
+            <strong>7. RESET</strong><br>
+            Restores default color + size.<br><br>
+
+            <strong>8. BACKGROUND [color]</strong><br>
+            Changes the output panel background.<br><br>
+
+            <strong>9. CENTER</strong><br>
+            Centers all following text.<br><br>
+
+            <strong>10. LEFT</strong><br>
+            Left-aligns all following text.<br><br>
+
+            <strong>11. RIGHT</strong><br>
+            Right-aligns all following text.<br><br>
+
+            <strong>12. TITLE [text]</strong><br>
+            Prints large bold title text.<br><br>
+
+            <strong>13. UNDERLINE [text]</strong><br>
+            Prints underlined text.<br><br>
+
+            <strong>14. ITALIC [text]</strong><br>
+            Prints italic text.<br><br>
+
+            <strong>15. BOLD [text]</strong><br>
+            Prints bold text.<br><br>
+
+            <strong>16. CLEAR</strong><br>
+            Clears the output panel.<br><br>
+
+            <strong>17. WAIT [milliseconds]</strong><br>
+            Pauses before running the next command.<br><br>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ---------------- BIRD INTERPRETER JS ---------------- -->
+
+<script>
+
+document.getElementById("bird-runBtn").onclick = function() {
+
+    const code =
+        document.getElementById("bird-codeInput").value.split("\n");
+
+    const output =
+        document.getElementById("bird-outputArea");
+
+    output.innerHTML = "";
+
+    let color = "black";
+    let size = 16;
+
+
+    function render(text) {
+
+        const span = document.createElement("div");
+
+        span.style.color = color;
+        span.style.fontSize = size + "px";
+
+        span.innerHTML = text;
+
+        output.appendChild(span);
+    }
+
+
+    function runBlock(lines) {
+
+        for (let i = 0; i < lines.length; i++) {
+
+            let line = lines[i].trim();
+
+
+            if (line.startsWith("SAY ")) {
+
+                render(line.substring(4));
+
+            }
+
+
+            // BACKGROUND
+
+            else if (line.startsWith("BACKGROUND ")) {
+
+                document.getElementById("bird-outputArea").style.background =
+                    line.substring(11).trim();
+
+            }
+
+
+            // CENTER
+
+            else if (line === "CENTER") {
+
+                output.style.textAlign = "center";
+
+            }
+
+
+            // LEFT
+
+            else if (line === "LEFT") {
+
+                output.style.textAlign = "left";
+
+            }
+
+
+            // RIGHT
+
+            else if (line === "RIGHT") {
+
+                output.style.textAlign = "right";
+
+            }
+
+
+            // TITLE
+
+            else if (line.startsWith("TITLE ")) {
+
+                render(
+                    `<div style="font-size:40px;font-weight:bold;">
+                    ${line.substring(6)}
+                    </div>`
+                );
+
+            }
+
+
+            // UNDERLINE
+
+            else if (line.startsWith("UNDERLINE ")) {
+
+                render(
+                    `<div style="text-decoration:underline;">
+                    ${line.substring(10)}
+                    </div>`
+                );
+
+            }
+
+
+            // ITALIC
+
+            else if (line.startsWith("ITALIC ")) {
+
+                render(
+                    `<div style="font-style:italic;">
+                    ${line.substring(7)}
+                    </div>`
+                );
+
+            }
+
+
+            // BOLD
+
+            else if (line.startsWith("BOLD ")) {
+
+                render(
+                    `<div style="font-weight:bold;">
+                    ${line.substring(5)}
+                    </div>`
+                );
+
+            }
+
+
+            // CLEAR
+
+            else if (line === "CLEAR") {
+
+                output.innerHTML = "";
+
+            }
+
+
+            // WAIT
+
+            else if (line.startsWith("WAIT ")) {
+
+                const ms =
+                    parseInt(line.substring(5).trim());
+
+                const start = Date.now();
+
+                while (Date.now() - start < ms) {}
+
+            }
+
+
+            // COLOR
+
+            else if (line.startsWith("COLOR ")) {
+
+                color =
+                    line.substring(6).trim();
+
+            }
+
+
+            // SIZE
+
+            else if (line.startsWith("SIZE ")) {
+
+                size =
+                    parseInt(line.substring(5).trim());
+
+            }
+
+
+            // NEWLINE
+
+            else if (line === "NEWLINE") {
+
+                render("<br>");
+
+            }
+
+
+            // BOX
+
+            else if (line.startsWith("BOX ")) {
+
+                render(
+                    `<div style="
+                        border:1px solid #ff7b00;
+                        padding:5px;
+                        display:inline-block;
+                        box-shadow:0 0 8px #ff7b00;
+                    ">
+                    ${line.substring(4)}
+                    </div>`
+                );
+
+            }
+
+
+            // RESET
+
+            else if (line === "RESET") {
+
+                color = "black";
+                size = 16;
+
+            }
+
+
+            // REPEAT
+
+            else if (line.startsWith("REPEAT ")) {
+
+                const count =
+                    parseInt(line.split(" ")[1]);
+
+                const block = [];
+
+                i++;
+
+                while (
+                    i < lines.length &&
+                    lines[i].trim() !== "}"
+                ) {
+
+                    block.push(lines[i]);
+
+                    i++;
+
+                }
+
+                for (let r = 0; r < count; r++) {
+
+                    runBlock(block);
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    runBlock(code);
+
+};
+
+</script>
+
+</body>
+</html>
+```
